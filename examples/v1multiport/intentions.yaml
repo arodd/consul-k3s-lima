@@ -1,0 +1,23 @@
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: unicorn
+spec:
+  destination:
+    name: unicorn-backend
+  sources:
+  - name: unicorn-frontend
+    action: allow
+---
+
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: unicorn-admin
+spec:
+  destination:
+    name: unicorn-backend-admin
+  sources:
+  - name: unicorn-frontend
+    action: allow
+---

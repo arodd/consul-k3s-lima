@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: unicorn-frontend
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: unicorn-frontend
+spec:
+  type: LoadBalancer
+  selector:
+    app: unicorn-frontend
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8000            # Should be the port the Kube LB will listen on to forward to TCP/10000
+      targetPort: 10000     # This should line up with the FakeService LISTEN_ADDR: 0.0.0.0:10000
+
+---
+
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceDefaults
+metadata:
+  name: unicorn-frontend
+spec:
+  protocol: http
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unicorn-frontend
+  labels:
+    app: unicorn-frontend
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unicorn-frontend
+  template:
+    metadata:
+      labels:
+        app: unicorn-frontend
+      annotations:
+        consul.hashicorp.com/connect-inject: 'true'
+        consul.hashicorp.com/transparent-proxy: 'true'
+    spec:
+      serviceAccountName: unicorn-frontend
+      containers:
+        - name: unicorn-frontend
+          image: nicholasjackson/fake-service:v0.26.0
+          # imagePullPolicy: Always       # Probably don't need this
+          ports:
+            - containerPort: 10000
+          # readinessProbe:
+          #   httpGet:
+          #     scheme: HTTP
+          #     path: /
+          #     port: 10000
+            # initialDelaySeconds: 10
+            # periodSeconds: 5
+          env:
+            - name: 'LISTEN_ADDR'
+              value: '0.0.0.0:10000'
+            - name: 'UPSTREAM_URIS'
+              value: 'http://unicorn-backend:10001,http://unicorn-backend-admin:10002'
+            - name: 'NAME'
+              value: 'unicorn-frontend'
+            - name: 'MESSAGE'
+              value: '<p><strong>The Unicorn-frontend Application</strong></p>'
+            - name: 'SERVER_TYPE'
+              value: 'http'
+            - name: 'TIMING_50_PERCENTILE'
+              value: '30ms'
+            - name: 'TIMING_90_PERCENTILE'
+              value: '60ms'
+            - name: 'TIMING_99_PERCENTILE'
+              value: '90ms'
+            - name: 'TIMING_VARIANCE'
+              value: '10'
+            - name: 'HTTP_CLIENT_REQUEST_TIMEOUT'
+              value: '3s'
