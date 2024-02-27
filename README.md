@@ -16,7 +16,7 @@ brew install lima
 #Start first VM K3s cluster
 limactl start --name=k8s1 --cpus=8 --memory=4 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=vzNAT template://k3s
 #Set Kubeconfig to the first cluster
-export KUBECONFIG="/Users/austin/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
+export KUBECONFIG="$HOME/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
 
 #Create Consul Namespace
 kubectl create namespace consul
@@ -83,7 +83,7 @@ consul operator raft list-peers
 
 ```bash
 #Set Kubeconfig to the first cluster
-export KUBECONFIG="/Users/austin/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
+export KUBECONFIG="$HOME/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
 
 #Expose api to the consul cli
 export CONSUL_HTTP_TOKEN=$(kubectl -n consul get secret us-central1-bootstrap-acl-token -o yaml | yq -r .data.token | base64 -d)
