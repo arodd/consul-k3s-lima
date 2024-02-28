@@ -1,7 +1,7 @@
 **Linux Example**
 
 ```bash
-limactl start --name=k8s1 --cpus=8 --memory=4 --vm-type=vz --network=vzNAT template://k3s
+limactl start --name=k8s1 --cpus=8 --memory=4 --network=lima:user-v2 template://k3s
 ```
 
 **Mac**
@@ -27,7 +27,7 @@ kubectl create secret generic consul-ent-license --from-literal="key=${secret}" 
 
 
 #This should return your license key
-kubectl get secret -n consul consul-ent-license -o yaml | yq .data.key | base64 -d
+kubectl get secret -n consul consul-ent-license -o yaml | yq -r .data.key | base64 -d
 
 # Apply Persistent Volume Claims
 kubectl apply -f pvc.yaml
@@ -64,7 +64,7 @@ kubectl create secret generic consul-ent-license --from-literal="key=${secret}" 
 
 
 #This should return your license key
-kubectl get secret -n consul consul-ent-license -o yaml | yq .data.key | base64 -d
+kubectl get secret -n consul consul-ent-license -o yaml | yq -r .data.key | base64 -d
 
 # Apply Persistent Volume Claims
 kubectl apply -f pvc.yaml
@@ -101,6 +101,7 @@ echo $PEERING_TOKEN
 #Switch to second cluster
 export KUBECONFIG="$HOME/.lima/k8s2/copied-from-guest/kubeconfig-fwd.yaml"
 export CONSUL_HTTP_TOKEN=$(kubectl -n consul get secret us-central2-bootstrap-acl-token -o yaml | yq -r .data.token | base64 -d)
+echo $CONSUL_HTTP_TOKEN
 export CONSUL_HTTP_ADDR=https://127.0.0.1:9501
 export CONSUL_HTTP_SSL_VERIFY=false
 
