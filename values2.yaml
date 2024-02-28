@@ -6,8 +6,8 @@ global:
   # adminPartitions:
   #  enabled: true
   enterpriseLicense:
-   secretName: 'consul-ent-license'
-   secretKey: 'key'
+    secretName: 'consul-ent-license'
+    secretKey: 'key'
   acls:
     manageSystemACLs: true
   datacenter: us-central2
@@ -22,11 +22,9 @@ global:
   adminPartitions:
     enabled: true
     name: "default"
-
 dns:
   enabled: true
   enableRedirection: true
-
 server:
   enabled: true
   replicas: 1
@@ -38,7 +36,6 @@ server:
   exposeService:
     enabled: false
     #type: LoadBalancer
-
 ui:
   enabled: true
   service:
@@ -50,10 +47,8 @@ ui:
     provider: "prometheus"
     baseURL: http://prometheus-server
     # baseURL: http://192.169.7.200:9090
-
 prometheus:
   enabled: true
-
 meshGateway:
   enabled: true
   service:
@@ -63,7 +58,6 @@ meshGateway:
     source: Static
     port: 9443
     static: 192.168.5.2
-
 connectInject:
   enabled: true
   default: false
@@ -79,7 +73,7 @@ connectInject:
   apiGateway:
     manageExternalCRDs: true
     managedGatewayClass:
-      serviceType: LoadBalancer   
+      serviceType: LoadBalancer
   consulNamespaces:
     consulDestinationNamespace: "default"
     mirroringK8S: true

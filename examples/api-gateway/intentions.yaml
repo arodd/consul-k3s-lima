@@ -7,7 +7,8 @@ spec:
   destination:
     name: unicorn-frontend
   sources:
-  - name: consul-api-gateway
-    namespace: consul
-    action: allow
+    - name: consul-api-gateway
+      namespace: consul
+      action: allow
 ---
+

@@ -5,10 +5,10 @@ metadata:
   namespace: default
 spec:
   parentRefs:
-  - name: consul-api-gateway      # Name of the Gateway as defined in the Gateway spec (kind: Gateway)
-    namespace: consul             # Namespace the Consul APIGW lives in
+    - name: consul-api-gateway # Name of the Gateway as defined in the Gateway spec (kind: Gateway)
+      namespace: consul # Namespace the Consul APIGW lives in
   rules:
-    - matches:                          # Match Path + rewrite: /unicorn-frontend/
+    - matches: # Match Path + rewrite: /unicorn-frontend/
         - path:
             type: PathPrefix
             value: /unicorn-frontend
@@ -18,11 +18,10 @@ spec:
             path:
               replacePrefixMatch: /
               type: ReplacePrefixMatch
-      backendRefs:                # Defines the backend service (upstream Consul service).
-      - kind: Service             # Kubernetes Service.
-        name: unicorn-frontend    # Kubernetes Service name that points to the Consul Mesh service.
+      backendRefs: # Defines the backend service (upstream Consul service).
+        - kind: Service # Kubernetes Service.
+          name: unicorn-frontend # Kubernetes Service name that points to the Consul Mesh service.
 ---
-
 apiVersion: gateway.networking.k8s.io/v1alpha2
 kind: ReferenceGrant
 metadata:
@@ -30,9 +29,9 @@ metadata:
   namespace: default
 spec:
   from:
-  - group: gateway.networking.k8s.io
-    kind: HTTPRoute
-    namespace: consul
+    - group: gateway.networking.k8s.io
+      kind: HTTPRoute
+      namespace: consul
   to:
-  - group: ""              # I assume this means any services within the specified namespace...
-    kind: Service
+    - group: "" # I assume this means any services within the specified namespace...
+      kind: Service

@@ -6,10 +6,9 @@ spec:
   destination:
     name: unicorn-backend
   sources:
-  - name: unicorn-frontend
-    action: allow
+    - name: unicorn-frontend
+      action: allow
 ---
-
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceIntentions
 metadata:
@@ -18,6 +17,7 @@ spec:
   destination:
     name: unicorn-backend-admin
   sources:
-  - name: unicorn-frontend
-    action: allow
+    - name: unicorn-frontend
+      action: allow
 ---
+
