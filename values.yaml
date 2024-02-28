@@ -55,9 +55,7 @@ meshGateway:
     type: LoadBalancer
     port: 8443
   wanAddress:
-    source: Static
-    port: 8443
-    static: 192.168.5.2
+    source: Service
 connectInject:
   enabled: true
   default: false

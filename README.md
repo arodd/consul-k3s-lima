@@ -14,7 +14,7 @@ brew install lima
 
 ```bash
 #Start first VM K3s cluster
-limactl start --name=k8s1 --cpus=8 --memory=4 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=vzNAT template://k3s
+limactl start --name=k8s1 --cpus=8 --memory=4 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 template://k3s
 #Set Kubeconfig to the first cluster
 export KUBECONFIG="$HOME/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
 
@@ -46,7 +46,7 @@ export CONSUL_HTTP_SSL_VERIFY=false
 
 ```bash
 #Start Second K3s VM
-limactl start --name=k8s2 --cpus=8 --memory=4 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=vzNAT template://k3s
+limactl start --name=k8s2 --cpus=8 --memory=4 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 template://k3s
 
 #Change Second Cluster API Port and set Kube config
 sed -e 's/6443/7443/g' $HOME/.lima/k8s2/copied-from-guest/kubeconfig.yaml > $HOME/.lima/k8s2/copied-from-guest/kubeconfig-fwd.yaml
@@ -74,6 +74,7 @@ consul-k8s install -config-file=values2.yaml
 
 #Expose api to the consul cli
 export CONSUL_HTTP_TOKEN=$(kubectl -n consul get secret us-central2-bootstrap-acl-token -o yaml | yq -r .data.token | base64 -d)
+echo $CONSUL_HTTP_TOKEN
 export CONSUL_HTTP_ADDR=https://127.0.0.1:9501
 export CONSUL_HTTP_SSL_VERIFY=false
 consul operator raft list-peers
@@ -115,9 +116,5 @@ consul peering establish -name us-central1-default -peering-token $PEERING_TOKEN
 **Cleanup**
 
 ```bash
-limactl stop k8s1  
-limactl delete k8s1
-
-limactl stop k8s2
-limactl delete k8s2
+limactl stop k8s1 && limactl delete k8s1 && limactl stop k8s2 && limactl delete k8s2
 ```

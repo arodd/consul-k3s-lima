@@ -11,7 +11,7 @@ spec:
     - matches: # Match Path + rewrite: /unicorn-frontend/
         - path:
             type: PathPrefix
-            value: /unicorn-frontend
+            value: /
       filters:
         - type: URLRewrite
           urlRewrite:

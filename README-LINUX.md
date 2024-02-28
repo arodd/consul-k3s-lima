@@ -21,7 +21,7 @@ kubectl get secret -n consul consul-ent-license -o yaml | yq -r .data.key | base
 kubectl apply -f pvc.yaml
 
 #Install Consul to first cluster
-consul-k8s install -config-file=values-linux.yaml
+consul-k8s install -config-file=values.yaml
 
 #Expose api to the consul cli
 export CONSUL_HTTP_TOKEN=$(kubectl -n consul get secret us-central1-bootstrap-acl-token -o yaml | yq -r .data.token | base64 -d)
@@ -58,7 +58,7 @@ kubectl get secret -n consul consul-ent-license -o yaml | yq -r .data.key | base
 kubectl apply -f pvc.yaml
 
 #Install Consul to second cluster
-consul-k8s install -config-file=values2-linux.yaml
+consul-k8s install -config-file=values2.yaml
 
 #Expose api to the consul cli
 export CONSUL_HTTP_TOKEN=$(kubectl -n consul get secret us-central2-bootstrap-acl-token -o yaml | yq -r .data.token | base64 -d)
