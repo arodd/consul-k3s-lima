@@ -22,7 +22,7 @@ source cluster2.env
 kubectl get all -n consul
 
 #Close Session
-ssh -S cluster2 -O exit -F /Users/austin/.lima/k8s2/ssh.config lima-k8s2
+ssh -S cluster2 -O exit -F $HOME/.lima/k8s2/ssh.config lima-k8s2
 ```
 
 ## Manual Bootstrapping
