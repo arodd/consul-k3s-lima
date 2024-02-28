@@ -1,11 +1,11 @@
-**Mac**
-
+# arm64 Mac deployment
 ```bash
 brew install lima  
 ```
 
-# Automated Bootstrap
+## Automated Bootstraping
 
+**Deploy 2 K3s clusters using lima vm's**
 ```bash
 ./start_mac.sh
 ```
@@ -25,7 +25,7 @@ kubectl get all -n consul
 ssh -S cluster2 -O exit -F /Users/austin/.lima/k8s2/ssh.config lima-k8s2
 ```
 
-# Manual Bootstrapping
+## Manual Bootstrapping
 **First Cluster Mac**
 
 ```bash
