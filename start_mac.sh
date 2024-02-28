@@ -1,8 +1,13 @@
 #!/bin/bash
 #Create Cluster1
-limactl --tty=false start --name=k8s1 --cpus=8 --memory=4 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 template://k3s
+limactl --tty=false start --name=k8s1 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s.yaml
 #Create Cluster2
-limactl --tty=false start --name=k8s2 --cpus=8 --memory=4 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 template://k3s
+limactl --tty=false start --name=k8s2 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s2.yaml
+#Create Cluster3
+#limactl --tty=false start --name=k8s3 --cpus=6 --memory=1 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s3.yaml
+#Create Cluster4
+#limactl --tty=false start --name=k8s4 --cpus=6 --memory=1 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s4.yaml
+
 
 #Set context to Cluster1
 export KUBECONFIG="$HOME/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
@@ -33,13 +38,8 @@ kubectl apply -f meshgw.yaml
 export PEERING_TOKEN=$(consul peering generate-token -name us-central2-default)
 echo $PEERING_TOKEN
 
-#Update k3s port for second cluster
-sed -e 's/6443/7443/g' $HOME/.lima/k8s2/copied-from-guest/kubeconfig.yaml > $HOME/.lima/k8s2/copied-from-guest/kubeconfig-fwd.yaml
 #Change context to Cluster2
-export KUBECONFIG="$HOME/.lima/k8s2/copied-from-guest/kubeconfig-fwd.yaml"
-
-# Open Port Forwarding Tunnel to Cluster2 K8s API
-ssh -M -S cluster2 -fNT -F $HOME/.lima/k8s2/ssh.config lima-k8s2 -L 7443:127.0.0.1:6443
+export KUBECONFIG="$HOME/.lima/k8s2/copied-from-guest/kubeconfig.yaml"
 
 #Create Consul Namespace
 kubectl create namespace consul
@@ -65,6 +65,3 @@ kubectl apply -f meshgw.yaml
 
 #Establish Peering Connection
 consul peering establish -name us-central1-default -peering-token $PEERING_TOKEN
-
-#Close SSH Tunnel
-ssh -S cluster2 -O exit -F $HOME/.lima/k8s2/ssh.config lima-k8s2

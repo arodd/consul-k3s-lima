@@ -2,7 +2,7 @@
 
 ```bash
 #Start first VM K3s cluster
-limactl start --name=k8s1 --cpus=8 --memory=4 --network=lima:user-v2 template://k3s
+limactl start --name=k8s1 --cpus=6 --memory=3 --network=lima:user-v2 k3s.yaml
 #Set Kubeconfig to the first cluster
 export KUBECONFIG="$HOME/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
 
@@ -41,14 +41,9 @@ echo $PEERING_TOKEN
 
 ```bash
 #Start Second K3s VM
-limactl start --name=k8s2 --cpus=8 --memory=4 --network=lima:user-v2 template://k3s
+limactl start --name=k8s2 --cpus=6 --memory=3 --network=lima:user-v2 k3s2.yaml
 
-#Change Second Cluster API Port and set Kube config
-sed -e 's/6443/7443/g' $HOME/.lima/k8s2/copied-from-guest/kubeconfig.yaml > $HOME/.lima/k8s2/copied-from-guest/kubeconfig-fwd.yaml
-export KUBECONFIG="$HOME/.lima/k8s2/copied-from-guest/kubeconfig-fwd.yaml"
-
-#Forward Second Cluster API to unique port(run in separate shell)
-ssh -F $HOME/.lima/k8s2/ssh.config lima-k8s2 -L 7443:127.0.0.1:6443
+export KUBECONFIG="$HOME/.lima/k8s2/copied-from-guest/kubeconfig.yaml"
 
 #Create Consul Namespace
 kubectl create namespace consul
@@ -78,6 +73,11 @@ kubectl apply -f meshgw.yaml
 
 #Establish peering connection
 consul peering establish -name us-central1-default -peering-token $PEERING_TOKEN
+```
+
+**SSH Access into VM**
+```
+ssh -F $HOME/.lima/k8s1/ssh.config lima-k8s1
 ```
 
 **Cleanup**

@@ -20,9 +20,19 @@ kubectl get all -n consul
 ```bash
 source cluster2.env
 kubectl get all -n consul
+```
 
-#Close Session
-ssh -S cluster2 -O exit -F $HOME/.lima/k8s2/ssh.config lima-k8s2
+**Guest SSH Access**
+```bash
+ssh -F $HOME/.lima/k8s1/ssh.config lima-k8s1
+ssh -F $HOME/.lima/k8s2/ssh.config lima-k8s2
+ssh -F $HOME/.lima/k8s3/ssh.config lima-k8s3
+ssh -F $HOME/.lima/k8s4/ssh.config lima-k8s4
+```
+
+**Cleanup Clusters**
+```bash
+./clean.sh
 ```
 
 ## Manual Bootstrapping
@@ -30,7 +40,7 @@ ssh -S cluster2 -O exit -F $HOME/.lima/k8s2/ssh.config lima-k8s2
 
 ```bash
 #Start first VM K3s cluster
-limactl start --name=k8s1 --cpus=8 --memory=4 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 template://k3s
+limactl start --name=k8s1 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s.yaml
 #Set Kubeconfig to the first cluster
 export KUBECONFIG="$HOME/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
 
@@ -70,14 +80,10 @@ echo $PEERING_TOKEN
 
 ```bash
 #Start Second K3s VM
-limactl start --name=k8s2 --cpus=8 --memory=4 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 template://k3s
+limactl start --name=k8s2 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s2.yaml
 
 #Change Second Cluster API Port and set Kube config
-sed -e 's/6443/7443/g' $HOME/.lima/k8s2/copied-from-guest/kubeconfig.yaml > $HOME/.lima/k8s2/copied-from-guest/kubeconfig-fwd.yaml
-export KUBECONFIG="$HOME/.lima/k8s2/copied-from-guest/kubeconfig-fwd.yaml"
-
-#Forward Second Cluster API to unique port(run in separate shell)
-ssh -F $HOME/.lima/k8s2/ssh.config lima-k8s2 -L 7443:127.0.0.1:6443
+export KUBECONFIG="$HOME/.lima/k8s2/copied-from-guest/kubeconfig.yaml"
 
 #Create Consul Namespace
 kubectl create namespace consul
@@ -85,7 +91,6 @@ kubectl create namespace consul
 #Create Enterprise License Secret
 secret=$(cat ~/consul.hclic)
 kubectl create secret generic consul-ent-license --from-literal="key=${secret}" -n consul
-
 
 #This should return your license key
 kubectl get secret -n consul consul-ent-license -o yaml | yq -r .data.key | base64 -d
