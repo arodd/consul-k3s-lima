@@ -1,15 +1,31 @@
-**Linux Example**
-
-```bash
-limactl start --name=k8s1 --cpus=8 --memory=4 --network=lima:user-v2 template://k3s
-```
-
 **Mac**
 
 ```bash
 brew install lima  
 ```
 
+# Automated Bootstrap
+
+```bash
+./start_mac.sh
+```
+
+**Run Commands in us-central1**
+```bash
+source cluster1.env
+kubectl get all -n consul
+```
+
+**Run Commands in us-central2**
+```bash
+source cluster2.env
+kubectl get all -n consul
+
+#Close Session
+ssh -S cluster2 -O exit -F /Users/austin/.lima/k8s2/ssh.config lima-k8s2
+```
+
+# Manual Bootstrapping
 **First Cluster Mac**
 
 ```bash
@@ -40,6 +56,14 @@ export CONSUL_HTTP_TOKEN=$(kubectl -n consul get secret us-central1-bootstrap-ac
 echo $CONSUL_HTTP_TOKEN
 export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
 export CONSUL_HTTP_SSL_VERIFY=false
+consul operator raft list-peers
+
+#Peering over Mesh Gateways
+kubectl apply -f meshgw.yaml
+
+#Generate Cluster Peering Token
+export PEERING_TOKEN=$(consul peering generate-token -name us-central2-default)
+echo $PEERING_TOKEN
 ```
 
 **Second Cluster Mac**
@@ -78,33 +102,6 @@ echo $CONSUL_HTTP_TOKEN
 export CONSUL_HTTP_ADDR=https://127.0.0.1:9501
 export CONSUL_HTTP_SSL_VERIFY=false
 consul operator raft list-peers
-```
-
-**Cluster Peering**
-
-```bash
-#Set Kubeconfig to the first cluster
-export KUBECONFIG="$HOME/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
-
-#Expose api to the consul cli
-export CONSUL_HTTP_TOKEN=$(kubectl -n consul get secret us-central1-bootstrap-acl-token -o yaml | yq -r .data.token | base64 -d)
-echo $CONSUL_HTTP_TOKEN
-export CONSUL_HTTP_ADDR=https://127.0.0.1:8501
-export CONSUL_HTTP_SSL_VERIFY=false
-
-#Peering over Mesh Gateways
-kubectl apply -f meshgw.yaml
-
-#Generate Cluster Peering Token
-export PEERING_TOKEN=$(consul peering generate-token -name us-central2-default)
-echo $PEERING_TOKEN
-
-#Switch to second cluster
-export KUBECONFIG="$HOME/.lima/k8s2/copied-from-guest/kubeconfig-fwd.yaml"
-export CONSUL_HTTP_TOKEN=$(kubectl -n consul get secret us-central2-bootstrap-acl-token -o yaml | yq -r .data.token | base64 -d)
-echo $CONSUL_HTTP_TOKEN
-export CONSUL_HTTP_ADDR=https://127.0.0.1:9501
-export CONSUL_HTTP_SSL_VERIFY=false
 
 #Peering over Mesh Gateways
 kubectl apply -f meshgw.yaml
@@ -116,5 +113,6 @@ consul peering establish -name us-central1-default -peering-token $PEERING_TOKEN
 **Cleanup**
 
 ```bash
-limactl stop k8s1 && limactl delete k8s1 && limactl stop k8s2 && limactl delete k8s2
+limactl stop k8s1 && limactl delete k8s1 && \
+limactl stop k8s2 && limactl delete k8s2
 ```
