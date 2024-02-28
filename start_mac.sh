@@ -1,16 +1,16 @@
 #!/bin/bash
 #Create Cluster1
-limactl --tty=false start --name=k8s1 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s.yaml
+limactl --tty=false start --name=k3s1 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s1.yaml
 #Create Cluster2
-limactl --tty=false start --name=k8s2 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s2.yaml
+limactl --tty=false start --name=k3s2 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s2.yaml
 #Create Cluster3
-#limactl --tty=false start --name=k8s3 --cpus=6 --memory=1 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s3.yaml
+#limactl --tty=false start --name=k3s3 --cpus=6 --memory=1 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s3.yaml
 #Create Cluster4
-#limactl --tty=false start --name=k8s4 --cpus=6 --memory=1 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s4.yaml
+#limactl --tty=false start --name=k3s4 --cpus=6 --memory=1 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s4.yaml
 
 
 #Set context to Cluster1
-export KUBECONFIG="$HOME/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
+export KUBECONFIG="$HOME/.lima/k3s1/copied-from-guest/kubeconfig.yaml"
 
 #Create Consul Namespace
 kubectl create namespace consul
@@ -39,7 +39,7 @@ export PEERING_TOKEN=$(consul peering generate-token -name us-central2-default)
 echo $PEERING_TOKEN
 
 #Change context to Cluster2
-export KUBECONFIG="$HOME/.lima/k8s2/copied-from-guest/kubeconfig.yaml"
+export KUBECONFIG="$HOME/.lima/k3s2/copied-from-guest/kubeconfig.yaml"
 
 #Create Consul Namespace
 kubectl create namespace consul

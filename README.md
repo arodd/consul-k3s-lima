@@ -24,10 +24,10 @@ kubectl get all -n consul
 
 **Guest SSH Access**
 ```bash
-ssh -F $HOME/.lima/k8s1/ssh.config lima-k8s1
-ssh -F $HOME/.lima/k8s2/ssh.config lima-k8s2
-ssh -F $HOME/.lima/k8s3/ssh.config lima-k8s3
-ssh -F $HOME/.lima/k8s4/ssh.config lima-k8s4
+ssh -F $HOME/.lima/k3s1/ssh.config lima-k3s1
+ssh -F $HOME/.lima/k3s2/ssh.config lima-k3s2
+ssh -F $HOME/.lima/k3s3/ssh.config lima-k3s3
+ssh -F $HOME/.lima/k3s4/ssh.config lima-k3s4
 ```
 
 **Cleanup Clusters**
@@ -40,9 +40,9 @@ ssh -F $HOME/.lima/k8s4/ssh.config lima-k8s4
 
 ```bash
 #Start first VM K3s cluster
-limactl start --name=k8s1 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s.yaml
+limactl start --name=k3s1 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s1.yaml
 #Set Kubeconfig to the first cluster
-export KUBECONFIG="$HOME/.lima/k8s1/copied-from-guest/kubeconfig.yaml"
+export KUBECONFIG="$HOME/.lima/k3s1/copied-from-guest/kubeconfig.yaml"
 
 #Create Consul Namespace
 kubectl create namespace consul
@@ -80,10 +80,10 @@ echo $PEERING_TOKEN
 
 ```bash
 #Start Second K3s VM
-limactl start --name=k8s2 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s2.yaml
+limactl start --name=k3s2 --cpus=6 --memory=3 --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s2.yaml
 
 #Change Second Cluster API Port and set Kube config
-export KUBECONFIG="$HOME/.lima/k8s2/copied-from-guest/kubeconfig.yaml"
+export KUBECONFIG="$HOME/.lima/k3s2/copied-from-guest/kubeconfig.yaml"
 
 #Create Consul Namespace
 kubectl create namespace consul
@@ -118,6 +118,6 @@ consul peering establish -name us-central1-default -peering-token $PEERING_TOKEN
 **Cleanup**
 
 ```bash
-limactl stop k8s1 && limactl delete k8s1 && \
-limactl stop k8s2 && limactl delete k8s2
+limactl stop k3s1 && limactl delete k3s1 && \
+limactl stop k3s2 && limactl delete k3s2
 ```
