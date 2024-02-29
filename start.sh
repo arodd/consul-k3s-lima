@@ -1,8 +1,15 @@
 #!/bin/bash
+set -euxo pipefail
 
 #Create Clusters using Memory and CPU settings from templates
 #Disabling 3&4 until I finish plumbing
-seq 1 2 | xargs -P 4 -I {} limactl --tty=false start --name=k3s{} --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s{}.yaml
+
+unameOut="$(uname -s)"
+case "${unameOut}" in
+    Linux*)     seq 1 2 | xargs -P 4 -I {} limactl --tty=false start --name=k3s{} --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s{}.yaml;;
+    Darwin*)    seq 1 2 | xargs -P 4 -I {} limactl --tty=false start --name=k3s{} --vm-type=vz --rosetta --mount-type=virtiofs --mount-writable --network=lima:user-v2 k3s{}.yaml;;
+    *)          echo "Unknown Machine Type UNKNOWN:${unameOut}" && exit 1
+esac
 
 #Set context to Cluster1
 export KUBECONFIG="$HOME/.lima/k3s1/copied-from-guest/kubeconfig.yaml"
