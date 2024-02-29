@@ -64,3 +64,5 @@ message: |
   export KUBECONFIG="{{.Dir}}/copied-from-guest/kubeconfig.yaml"
   kubectl ...
   ------
+cpus: 4
+memory: 3GiB
