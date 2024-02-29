@@ -1,4 +1,4 @@
-# arm64 Mac deployment
+# arm64 Mac and arm64/x86_64 Linux deployment
 ```bash
 brew install lima  
 ```
@@ -7,7 +7,7 @@ brew install lima
 
 **Deploy 2 K3s clusters using lima vm's**
 ```bash
-./start_mac.sh
+./start.sh
 ```
 
 **Run Commands in us-central1**
