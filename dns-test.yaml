@@ -8,6 +8,6 @@ spec:
       containers:
         - name: dns
           image: anubhavmishra/tiny-tools
-          command: ['dig', 'consul.service.consul']
+          command: ['dig', 'consul.service.us-central1.dc.consul']
       restartPolicy: Never
   backoffLimit: 4

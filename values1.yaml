@@ -63,8 +63,8 @@ connectInject:
   cni:
     enabled: true
     logLevel: debug
-    #cniBinDir: "/home/kubernetes/bin"
-    #cniNetDir: "/etc/cni/net.d"
+    cniBinDir: "/var/lib/rancher/k3s/data/current/bin/"
+    cniNetDir: "/var/lib/rancher/k3s/agent/etc/cni/net.d/"
   transparentProxy:
     defaultEnabled: true
     defaultOverwriteProbes: true

@@ -63,7 +63,7 @@ spec:
             - name: 'LISTEN_ADDR'
               value: '0.0.0.0:10000'
             - name: 'UPSTREAM_URIS'
-              value: 'http://unicorn-backend:10001,http://unicorn-backend-admin:10002'
+              value: 'http://unicorn-backend.virtual.default.ns.default.ap.us-central1.dc.consul:10001,http://unicorn-backend-admin.virtual.default.ns.default.ap.us-central1.dc.consul:10002'
             - name: 'NAME'
               value: 'unicorn-frontend'
             - name: 'MESSAGE'

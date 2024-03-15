@@ -42,6 +42,13 @@ metadata:
   name: unicorn-backend
 spec:
   protocol: http
+  expose:
+      checks: false
+      paths:
+      - path: /
+        localPathPort: 10001
+        listenerPort: 10003
+        protocol: http
 ---
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceDefaults
@@ -49,6 +56,13 @@ metadata:
   name: unicorn-backend-admin
 spec:
   protocol: http
+  expose:
+      checks: false
+      paths:
+      - path: /
+        localPathPort: 10002
+        listenerPort: 10003
+        protocol: http
 ---
 apiVersion: v1
 kind: Secret
@@ -94,12 +108,12 @@ spec:
             httpGet:
               scheme: HTTP
               path: /
-              port: 10001
+              port: 10003
             initialDelaySeconds: 10
             periodSeconds: 5
           env:
             - name: 'LISTEN_ADDR'
-              value: '0.0.0.0:10001'
+              value: '127.0.0.1:10001'
             - name: 'NAME'
               value: 'unicorn-backend'
             - name: 'MESSAGE'
@@ -124,12 +138,12 @@ spec:
             httpGet:
               scheme: HTTP
               path: /
-              port: 10002
+              port: 10003
             initialDelaySeconds: 10
             periodSeconds: 5
           env:
             - name: 'LISTEN_ADDR'
-              value: '0.0.0.0:10002'
+              value: '127.0.0.1:10002'
             - name: 'NAME'
               value: 'unicorn-backend-admin'
             - name: 'MESSAGE'
