@@ -61,7 +61,7 @@ spec:
       paths:
       - path: /
         localPathPort: 10002
-        listenerPort: 10003
+        listenerPort: 10004
         protocol: http
 ---
 apiVersion: v1
@@ -138,7 +138,7 @@ spec:
             httpGet:
               scheme: HTTP
               path: /
-              port: 10003
+              port: 10004
             initialDelaySeconds: 10
             periodSeconds: 5
           env:
