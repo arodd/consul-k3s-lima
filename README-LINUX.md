@@ -77,7 +77,7 @@ consul peering establish -name us-central1-default -peering-token $PEERING_TOKEN
 
 **SSH Access into VM**
 ```
-ssh -F $HOME/.lima/k3s1/ssh.config lima-k8s1
+ssh -F $HOME/.lima/k3s1/ssh.config lima-k3s1
 ```
 
 **Cleanup**
