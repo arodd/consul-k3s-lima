@@ -20,4 +20,14 @@ spec:
     - name: unicorn-frontend
       action: allow
 ---
-
+apiVersion: consul.hashicorp.com/v1alpha1
+kind: ServiceIntentions
+metadata:
+  name: unicorn-s3
+spec:
+  destination:
+    name: unicorn-s3
+  sources:
+    - name: unicorn-backend
+      action: allow
+---

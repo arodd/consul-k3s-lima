@@ -93,6 +93,7 @@ spec:
         consul.hashicorp.com/transparent-proxy: 'false'
         consul.hashicorp.com/connect-service: 'unicorn-backend,unicorn-backend-admin'
         consul.hashicorp.com/connect-service-port: '10001,10002'
+        consul.hashicorp.com/connect-service-upstreams: 'unicorn-s3.svc:10006'
         consul.hashicorp.com/enable-metrics: 'false'
         # consul.hashicorp.com/service-meta-version: 'v1'
     spec:
@@ -104,13 +105,6 @@ spec:
           ports:
             - containerPort: 10001
               name: http1
-          readinessProbe:
-            httpGet:
-              scheme: HTTP
-              path: /
-              port: 10003
-            initialDelaySeconds: 10
-            periodSeconds: 5
           env:
             - name: 'LISTEN_ADDR'
               value: '127.0.0.1:10001'
@@ -134,13 +128,6 @@ spec:
           ports:
             - containerPort: 10002
               name: http2
-          readinessProbe:
-            httpGet:
-              scheme: HTTP
-              path: /
-              port: 10004
-            initialDelaySeconds: 10
-            periodSeconds: 5
           env:
             - name: 'LISTEN_ADDR'
               value: '127.0.0.1:10002'
@@ -150,6 +137,8 @@ spec:
               value: 'peekaboo'
             - name: 'SERVER_TYPE'
               value: 'http'
+            - name: 'UPSTREAM_URIS'
+              value: 'http://127.0.0.1:10006'
             - name: 'TIMING_50_PERCENTILE'
               value: '30ms'
             - name: 'TIMING_90_PERCENTILE'

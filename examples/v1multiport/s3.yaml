@@ -1,73 +1,78 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: unicorn-split2
+  name: unicorn-s3
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: unicorn-split2
+  name: unicorn-s3
 spec:
   type: ClusterIP
   selector:
-    app: unicorn-split2
+    app: unicorn-s3
   ports:
     - name: http1
       protocol: TCP
-      port: 10003
+      port: 10006
       targetPort: http1
 ---
 apiVersion: consul.hashicorp.com/v1alpha1
 kind: ServiceDefaults
 metadata:
-  name: unicorn-split2
+  name: unicorn-s3
 spec:
   protocol: http
+  expose:
+      checks: false
+      paths:
+      - path: /
+        localPathPort: 10006
+        listenerPort: 10007
+        protocol: http
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: unicorn-split2
+  name: unicorn-s3
   labels:
-    app: unicorn-split2
+    app: unicorn-s3
     version: v1
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: unicorn-split2
+      app: unicorn-s3
   template:
     metadata:
       labels:
-        app: unicorn-split2
+        app: unicorn-s3
       annotations:
         consul.hashicorp.com/connect-inject: 'true'
-        consul.hashicorp.com/enable-metrics: 'false'
-        consul.hashicorp.com/transparent-proxy: 'false'
         # consul.hashicorp.com/service-meta-version: 'v1'
     spec:
-      serviceAccountName: unicorn-split2
+      serviceAccountName: unicorn-s3
       containers:
-        - name: unicorn-split2
+        - name: unicorn-s3
           image: nicholasjackson/fake-service:v0.26.0
           # imagePullPolicy: Always       # Probably don't need this
           ports:
-            - containerPort: 10003
+            - containerPort: 10006
               name: http1
           # readinessProbe:
           #   httpGet:
           #     scheme: HTTP
           #     path: /
-          #     port: 10004
+          #     port: 10007
           #   initialDelaySeconds: 10
           #   periodSeconds: 5
           env:
             - name: 'LISTEN_ADDR'
-              value: '127.0.0.1:10003'
+              value: '127.0.0.1:10006'
             - name: 'NAME'
-              value: 'unicorn-split2'
+              value: 'unicorn-s3'
             - name: 'MESSAGE'
-              value: 'peekaboo2'
+              value: 'peekaboo'
             - name: 'SERVER_TYPE'
               value: 'http'
             - name: 'TIMING_50_PERCENTILE'
